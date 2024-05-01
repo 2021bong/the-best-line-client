@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
-import './globals.css';
-import './reset.css';
+import './styles/reset.css';
+import './styles/globals.css';
+import './styles/custom_tailwind.css';
 
 export const metadata: Metadata = {
   title: '최고의 한 줄',
@@ -14,6 +15,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='kr'>
+      <head>
+        <link
+          href='https://hangeul.pstatic.net/hangeul_static/css/nanum-square-round.css'
+          rel='stylesheet'
+        />
+      </head>
       <body>{children}</body>
     </html>
   );

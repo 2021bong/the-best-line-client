@@ -1,0 +1,16 @@
+/* @apply로 tailwind css를 사용하는게 포함되면 여기에 정의 */
+
+/* global styles */
+.logo_font {
+  font-family: 'MoiraiOne-Regular';
+  @apply text-orange-500;
+}
+
+/* specific component styles */
+.title {
+  @apply text-4xl font-bold mb-2;
+}
+
+.sub_title {
+  @apply mb-4;
+}
