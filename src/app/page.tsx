@@ -1,7 +1,7 @@
-import Main from '@/components/Main';
-import Login from './login/page';
+import MainLogon from '@/components/MainLogon';
+import MainLogin from '../components/MainLogin';
 
 export default function Home() {
   const isLogin = false;
-  return <div>{isLogin ? <Main /> : <Login />}</div>;
+  return <div>{isLogin ? <MainLogon /> : <MainLogin />}</div>;
 }
