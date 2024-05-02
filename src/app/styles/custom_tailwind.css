@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* @apply로 tailwind css를 사용하는게 포함되면 여기에 정의 */
 
 /* global styles */
@@ -6,11 +10,31 @@
   @apply text-orange-500;
 }
 
+.orange {
+  @apply text-orange-500;
+}
+
 /* specific component styles */
+
+/* title */
 .title {
-  @apply text-4xl font-bold mb-2;
+  @apply mb-2 text-4xl font-bold;
 }
 
 .sub_title {
-  @apply mb-4;
+  @apply mb-4 text-2xl font-bold;
+}
+
+/* button */
+.button {
+  @apply my-4 p-1 px-4 border-2 border-solid rounded-full border-orange-500 text-base text-orange-500 bg-white cursor-pointer hover:bg-orange-500 hover:text-white active:bg-orange-600;
+}
+
+.filled {
+  @apply bg-orange-500 text-white hover:bg-orange-400 active:bg-orange-600;
+}
+
+/* border */
+.border {
+  @apply border-solid border-gray-300;
 }

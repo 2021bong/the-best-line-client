@@ -1,3 +1,7 @@
+import Main from '@/components/Main';
+import Login from './login/page';
+
 export default function Home() {
-  return <main>최고의 한 줄</main>;
+  const isLogin = false;
+  return <div>{isLogin ? <Main /> : <Login />}</div>;
 }

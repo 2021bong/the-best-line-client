@@ -15,12 +15,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='kr'>
-      <head>
-        <link
-          href='https://hangeul.pstatic.net/hangeul_static/css/nanum-square-round.css'
-          rel='stylesheet'
-        />
-      </head>
       <body>{children}</body>
     </html>
   );
