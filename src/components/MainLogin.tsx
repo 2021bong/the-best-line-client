@@ -1,4 +1,4 @@
-import NowNovels from '@/components/NowNovels';
+import FirstNovels from '@/components/FirstNovel';
 import Link from 'next/link';
 
 export default function Login() {
@@ -11,7 +11,7 @@ export default function Login() {
         명대사를 써보자!
       </p>
       <p className='orange mb-5 font-bold'>소설은 여기까지 진행됐어요</p>
-      <NowNovels />
+      <FirstNovels />
       <Link href='/login'>
         <button className='button'>로그인하기</button>
       </Link>
