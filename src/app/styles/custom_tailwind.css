@@ -38,3 +38,9 @@
 .border {
   @apply border-solid border-gray-300;
 }
+
+/* input */
+input {
+  @apply my-2 border-2 border-orange-400 rounded-lg placeholder-orange-400 px-4 py-2 shadow-sm;
+  transition: 0.3s border;
+}
