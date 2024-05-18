@@ -1,6 +1,8 @@
 'use client';
 
+import { signUp } from '@/api/auth';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 
@@ -22,6 +24,7 @@ export default function InputForm({ owner }: InputFormProps) {
     checkPassword: '',
     name: '',
   });
+  const router = useRouter();
 
   const handleChange = (e: ChangeEvent) => {
     const { name, value } = e.target as HTMLInputElement;
@@ -118,7 +121,7 @@ export default function InputForm({ owner }: InputFormProps) {
     console.log('로그인');
   };
 
-  const onSignup = (e: FormEvent) => {
+  const onSignup = async (e: FormEvent) => {
     e.preventDefault();
     if (errors.signupEmail?.message || !inputData.signupEmail) {
       return alert('이메일을 확인해주세요.');
@@ -129,8 +132,10 @@ export default function InputForm({ owner }: InputFormProps) {
     if (errors.checkPassword?.message || !inputData.checkPassword) {
       return alert('비밀번호 재입력을 확인해주세요.');
     }
-
-    console.log('회원가입');
+    const { signupEmail, signupPassword, name } = inputData;
+    const data = await signUp(signupEmail, signupPassword, name);
+    // todo : 중간중간 에러 발생했을때(이미 존재하는 이메일 등) 페이지 이동 안하고 예외처리 필요
+    router.push('/login');
   };
 
   switch (owner) {
