@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAnalytics } from 'firebase/analytics';
+// import { getAnalytics } from 'firebase/analytics';
 
 export default function getFireStore() {
   // todo : NEXT_PUBLIC 말고 서버용으로 나중에 바꿔야함, 서버 컴포넌트에서 사용할 수 있는지 먼저 확인 필요
@@ -14,7 +14,7 @@ export default function getFireStore() {
   };
 
   const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
+  // const analytics = getAnalytics(app);
 
-  return { app, analytics };
+  return { app };
 }

@@ -1,10 +1,10 @@
 'use client';
 
-import { signUp } from '@/api/auth';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
+import { createUser, getErrorMessage } from '@/components/aboutSignup';
 
 type Inputs = {
   loginEmail: string;
@@ -133,9 +133,14 @@ export default function InputForm({ owner }: InputFormProps) {
       return alert('비밀번호 재입력을 확인해주세요.');
     }
     const { signupEmail, signupPassword, name } = inputData;
-    const data = await signUp(signupEmail, signupPassword, name);
-    // todo : 중간중간 에러 발생했을때(이미 존재하는 이메일 등) 페이지 이동 안하고 예외처리 필요
-    router.push('/login');
+    try {
+      // todo : 회원가입이 완료되었습니다. 이메일 인증을 진행해주세요. 페이지 필요
+      const result = await createUser(signupEmail, signupPassword, name);
+      console.log('result', result);
+      // todo : 중간중간 에러 발생했을때(이미 존재하는 이메일 등) 페이지 이동 안하고 예외처리 필요
+    } catch (error) {
+      alert(getErrorMessage(error));
+    }
   };
 
   switch (owner) {
