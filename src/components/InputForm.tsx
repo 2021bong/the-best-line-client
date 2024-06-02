@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { createUser, getErrorMessage } from '@/components/aboutSignup';
+import { FirebaseError } from 'firebase/app';
 
 type Inputs = {
   loginEmail: string;
@@ -134,12 +135,13 @@ export default function InputForm({ owner }: InputFormProps) {
     }
     const { signupEmail, signupPassword, name } = inputData;
     try {
-      // todo : 회원가입이 완료되었습니다. 이메일 인증을 진행해주세요. 페이지 필요
       const result = await createUser(signupEmail, signupPassword, name);
-      console.log('result', result);
-      // todo : 중간중간 에러 발생했을때(이미 존재하는 이메일 등) 페이지 이동 안하고 예외처리 필요
-    } catch (error) {
-      alert(getErrorMessage(error));
+      // todo : 로딩이 오래걸려서 로딩 스피너 필요할 듯
+      router.push('/signup/complete');
+    } catch (error: unknown) {
+      if (error instanceof FirebaseError) {
+        alert(getErrorMessage(error.code));
+      }
     }
   };
 

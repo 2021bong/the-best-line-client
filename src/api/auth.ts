@@ -13,10 +13,7 @@ import {
 
 getFireStore();
 
-// todo : 회원가입하면서 400에러 뜨는데 어디서 발생하는 건지 찾아야 함
-// todo : 중간중간 에러 발생했을때(이미 존재하는 이메일 등) 페이지 이동 안하고 예외처리 필요
 // 회원가입
-
 export async function signUp(email: string, password: string) {
   const auth = getAuth();
   const createResult = await createUserWithEmailAndPassword(
@@ -28,6 +25,7 @@ export async function signUp(email: string, password: string) {
   return createResult;
 }
 
+// 회원가입하면서 이름 설정
 export async function updateName(name: string, user: User) {
   const auth = getAuth();
   let updateResult = null;
