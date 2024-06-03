@@ -6,6 +6,7 @@ import { ChangeEvent, FormEvent, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { createUser, getErrorMessage } from '@/components/aboutSignup';
 import { FirebaseError } from 'firebase/app';
+import Loading from './Loading';
 
 type Inputs = {
   loginEmail: string;
@@ -25,6 +26,7 @@ export default function InputForm({ owner }: InputFormProps) {
     checkPassword: '',
     name: '',
   });
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleChange = (e: ChangeEvent) => {
@@ -133,14 +135,19 @@ export default function InputForm({ owner }: InputFormProps) {
     if (errors.checkPassword?.message || !inputData.checkPassword) {
       return alert('비밀번호 재입력을 확인해주세요.');
     }
+
+    setIsLoading(true);
     const { signupEmail, signupPassword, name } = inputData;
     try {
       const result = await createUser(signupEmail, signupPassword, name);
-      // todo : 로딩이 오래걸려서 로딩 스피너 필요할 듯
+      if (result) {
+        setIsLoading(false);
+      }
       router.push('/signup/complete');
     } catch (error: unknown) {
       if (error instanceof FirebaseError) {
         alert(getErrorMessage(error.code));
+        setIsLoading(false);
       }
     }
   };
@@ -179,154 +186,157 @@ export default function InputForm({ owner }: InputFormProps) {
       );
     case 'signup':
       return (
-        <form className='flex flex-col' onSubmit={onSignup}>
-          <label htmlFor='signUpEmail'>
-            이메일 <span className='orange font-bold'>*</span>
-          </label>
-          <Controller
-            name='signupEmail'
-            control={control}
-            defaultValue=''
-            render={({ field }) => (
-              <input
-                type='text'
-                id='signupEmail'
-                placeholder='이메일'
-                className={
-                  inputData.signupEmail ? 'border-solid' : 'border-dashed'
-                }
-                {...field}
-                value={inputData.signupEmail}
-                onChange={(e) => {
-                  handleChange(e);
-                  field.onChange(e);
-                  validateEmail(e.target.value);
-                }}
-              />
-            )}
-          />
-          <p className='orange h-4'>
-            {errors.signupEmail ? errors.signupEmail.message : ' '}
-          </p>
+        <>
+          {isLoading && <Loading />}
+          <form className='flex flex-col' onSubmit={onSignup}>
+            <label htmlFor='signUpEmail'>
+              이메일 <span className='orange font-bold'>*</span>
+            </label>
+            <Controller
+              name='signupEmail'
+              control={control}
+              defaultValue=''
+              render={({ field }) => (
+                <input
+                  type='text'
+                  id='signupEmail'
+                  placeholder='이메일'
+                  className={
+                    inputData.signupEmail ? 'border-solid' : 'border-dashed'
+                  }
+                  {...field}
+                  value={inputData.signupEmail}
+                  onChange={(e) => {
+                    handleChange(e);
+                    field.onChange(e);
+                    validateEmail(e.target.value);
+                  }}
+                />
+              )}
+            />
+            <p className='orange h-4'>
+              {errors.signupEmail ? errors.signupEmail.message : ' '}
+            </p>
 
-          <label htmlFor='signupPassword' className='mt-2'>
-            비밀번호<span className='orange font-bold'>*</span>
-          </label>
-          <Controller
-            name='signupPassword'
-            control={control}
-            defaultValue=''
-            rules={{
-              required: '비밀번호를 입력해주세요.',
-              minLength: { value: 8, message: '최소 8자 이상 입력해주세요.' },
-              maxLength: {
-                value: 20,
-                message: '최대 20자까지 입력가능합니다.',
-              },
-            }}
-            render={({ field }) => (
-              <input
-                type='password'
-                id='signupPassword'
-                placeholder='비밀번호'
-                className={
-                  inputData.signupPassword ? 'border-solid' : 'border-dashed'
-                }
-                {...field}
-                value={inputData.signupPassword}
-                onChange={(e) => {
-                  handleChange(e);
-                  field.onChange(e);
-                  validatePassword(e.target.value);
-                }}
-              />
-            )}
-          />
-          <p className='orange h-4'>
-            {errors.signupPassword ? errors.signupPassword.message : ' '}
-          </p>
+            <label htmlFor='signupPassword' className='mt-2'>
+              비밀번호<span className='orange font-bold'>*</span>
+            </label>
+            <Controller
+              name='signupPassword'
+              control={control}
+              defaultValue=''
+              rules={{
+                required: '비밀번호를 입력해주세요.',
+                minLength: { value: 8, message: '최소 8자 이상 입력해주세요.' },
+                maxLength: {
+                  value: 20,
+                  message: '최대 20자까지 입력가능합니다.',
+                },
+              }}
+              render={({ field }) => (
+                <input
+                  type='password'
+                  id='signupPassword'
+                  placeholder='비밀번호'
+                  className={
+                    inputData.signupPassword ? 'border-solid' : 'border-dashed'
+                  }
+                  {...field}
+                  value={inputData.signupPassword}
+                  onChange={(e) => {
+                    handleChange(e);
+                    field.onChange(e);
+                    validatePassword(e.target.value);
+                  }}
+                />
+              )}
+            />
+            <p className='orange h-4'>
+              {errors.signupPassword ? errors.signupPassword.message : ' '}
+            </p>
 
-          <label htmlFor='checkPassword' className='mt-2'>
-            비밀번호 재입력<span className='orange font-bold'>*</span>
-          </label>
-          <Controller
-            name='checkPassword'
-            control={control}
-            defaultValue=''
-            rules={{
-              required: '비밀번호을 재입력해주세요.',
-              minLength: { value: 8, message: '최소 8자 이상 입력해주세요.' },
-              maxLength: {
-                value: 20,
-                message: '최대 20자까지 입력가능합니다.',
-              },
-              validate: {
-                compare: (checkpw) =>
-                  checkpw === inputData.signupPassword ||
-                  '비밀번호가 다릅니다.',
-              },
-            }}
-            render={({ field }) => (
-              <input
-                type='password'
-                id='checkPassword'
-                placeholder='비밀번호 재입력'
-                className={
-                  inputData.checkPassword ? 'border-solid' : 'border-dashed'
-                }
-                {...field}
-                value={inputData.checkPassword}
-                onChange={(e) => {
-                  handleChange(e);
-                  field.onChange(e);
-                  comparePassword(e.target.value);
-                }}
-              />
-            )}
-          />
-          <p className='orange h-4'>
-            {errors.checkPassword ? errors.checkPassword.message : ' '}
-          </p>
+            <label htmlFor='checkPassword' className='mt-2'>
+              비밀번호 재입력<span className='orange font-bold'>*</span>
+            </label>
+            <Controller
+              name='checkPassword'
+              control={control}
+              defaultValue=''
+              rules={{
+                required: '비밀번호을 재입력해주세요.',
+                minLength: { value: 8, message: '최소 8자 이상 입력해주세요.' },
+                maxLength: {
+                  value: 20,
+                  message: '최대 20자까지 입력가능합니다.',
+                },
+                validate: {
+                  compare: (checkpw) =>
+                    checkpw === inputData.signupPassword ||
+                    '비밀번호가 다릅니다.',
+                },
+              }}
+              render={({ field }) => (
+                <input
+                  type='password'
+                  id='checkPassword'
+                  placeholder='비밀번호 재입력'
+                  className={
+                    inputData.checkPassword ? 'border-solid' : 'border-dashed'
+                  }
+                  {...field}
+                  value={inputData.checkPassword}
+                  onChange={(e) => {
+                    handleChange(e);
+                    field.onChange(e);
+                    comparePassword(e.target.value);
+                  }}
+                />
+              )}
+            />
+            <p className='orange h-4'>
+              {errors.checkPassword ? errors.checkPassword.message : ' '}
+            </p>
 
-          <label htmlFor='name' className='mt-2'>
-            필명
-          </label>
-          {/* todo : 사용자 이름 랜덤 텍스트 생성 후 플레이스 홀더로 넣기*/}
-          <Controller
-            name='name'
-            control={control}
-            defaultValue=''
-            render={({ field }) => (
-              <input
-                type='text'
-                id='name'
-                placeholder='사용자 이름'
-                className={inputData.name ? 'border-solid' : 'border-dashed'}
-                {...field}
-                value={inputData.name}
-                onChange={(e) => {
-                  handleChange(e);
-                  field.onChange(e);
-                  validateName(e.target.value);
-                }}
-              />
-            )}
-          />
-          <p className='orange h-4'>
-            {errors.name ? errors.name.message : ' '}
-            {!inputData.name &&
-              '필명을 입력하지 않을 시 임의의 필명으로 설정됩니다.'}
-          </p>
+            <label htmlFor='name' className='mt-2'>
+              필명
+            </label>
+            {/* todo : 사용자 이름 랜덤 텍스트 생성 후 플레이스 홀더로 넣기*/}
+            <Controller
+              name='name'
+              control={control}
+              defaultValue=''
+              render={({ field }) => (
+                <input
+                  type='text'
+                  id='name'
+                  placeholder='사용자 이름'
+                  className={inputData.name ? 'border-solid' : 'border-dashed'}
+                  {...field}
+                  value={inputData.name}
+                  onChange={(e) => {
+                    handleChange(e);
+                    field.onChange(e);
+                    validateName(e.target.value);
+                  }}
+                />
+              )}
+            />
+            <p className='orange h-4'>
+              {errors.name ? errors.name.message : ' '}
+              {!inputData.name &&
+                '필명을 입력하지 않을 시 임의의 필명으로 설정됩니다.'}
+            </p>
 
-          <div>
-            <button className='button filled' type='submit'>
-              완료
-            </button>
-            <Link href='/login'>
-              <button className='button'>취소</button>
-            </Link>
-          </div>
-        </form>
+            <div>
+              <button className='button filled' type='submit'>
+                완료
+              </button>
+              <Link href='/login'>
+                <button className='button'>취소</button>
+              </Link>
+            </div>
+          </form>
+        </>
       );
     default:
       return;
