@@ -1,5 +1,4 @@
 import getFireStore from '@/components/getFireStore';
-import { FirebaseError } from 'firebase/app';
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -8,7 +7,6 @@ import {
   signInWithEmailAndPassword,
   signOut,
   User,
-  Auth,
 } from 'firebase/auth';
 
 getFireStore();
@@ -39,7 +37,6 @@ export async function updateName(name: string, user: User) {
   return updateResult;
 }
 
-// todo : 회원가입 후 이메일 전송하여 인증하도록 수정 필요, 인증 완료 페이지 수정 필요
 // 이메일 인증
 export async function verifyEmail() {
   const auth = getAuth();
