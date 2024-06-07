@@ -15,7 +15,7 @@ function getNovels() {
   ];
 }
 
-export default function NovelMainLogin() {
+export default function LoginNovels() {
   const novels = getNovels();
   return <Novels novels={novels} ellipsis={true} />;
 }

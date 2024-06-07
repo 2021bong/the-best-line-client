@@ -10,15 +10,6 @@ async function createUser(email: string, pw: string, name: string) {
   return { result: true, user, auth };
 }
 
-function getErrorMessage(msg: string) {
-  switch (msg) {
-    case 'auth/email-already-in-use':
-      return '동일한 이메일이 존재합니다. 이메일을 다시 설정해주세요.';
-    default:
-      return '에러가 발생했습니다. 다시 시도해주세요.';
-  }
-}
-
 // todo : 추후 서버에서 하도록 수정
 function makeRandomName() {
   const adjectives = [
@@ -56,4 +47,4 @@ function makeRandomName() {
   );
 }
 
-export { createUser, getErrorMessage };
+export { createUser };

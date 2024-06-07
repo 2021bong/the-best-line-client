@@ -1,8 +1,8 @@
-import NovelsMainLogin from './NovelsMainLogin';
+import LoginNovels from './LoginNovels';
 import Link from 'next/link';
 import Logo from '../components/Logo';
 
-export default function Login() {
+export default function MainLogin() {
   return (
     <main>
       <Logo />
@@ -12,7 +12,7 @@ export default function Login() {
         명대사를 써보자!
       </p>
       <p className='orange mb-5 font-bold'>소설은 여기까지 진행됐어요</p>
-      <NovelsMainLogin />
+      <LoginNovels />
       <Link href='/login'>
         <button className='button'>로그인하기</button>
       </Link>
