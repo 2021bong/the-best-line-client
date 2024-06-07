@@ -50,20 +50,16 @@ export async function verifyEmail() {
   return auth;
 }
 
-// todo : userCredential 저장 위치 확인, 서버랑 어떻게 통신할지 확인
+// todo : userCredential 저장 위치 변경, 서버랑 어떻게 통신할지 확인
 // 로그인
-export function login(email: string, password: string) {
+export async function login(email: string, password: string) {
   const auth = getAuth();
-  signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      // Signed in
-      const user = userCredential.user;
-      // ...
-    })
-    .catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-    });
+  const userData: User = await signInWithEmailAndPassword(
+    auth,
+    email,
+    password
+  ).then((userCredential) => userCredential.user);
+  return userData;
 }
 
 // 로그아웃

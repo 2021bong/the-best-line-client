@@ -4,18 +4,11 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { createUser, getErrorMessage } from '@/components/aboutSignup';
+import { createUser } from '@/components/aboutSignup';
+import { getErrorMessage } from '@/components/util';
+import { login } from '@/api/auth';
 import { FirebaseError } from 'firebase/app';
 import Loading from './Loading';
-
-type Inputs = {
-  loginEmail: string;
-  loginPassword: string;
-  signupEmail: string;
-  signupPassword: string;
-  checkPassword: string;
-  name: string;
-};
 
 export default function InputForm({ owner }: InputFormProps) {
   const [inputData, setInputData] = useState({
@@ -42,6 +35,7 @@ export default function InputForm({ owner }: InputFormProps) {
     clearErrors,
   } = useForm<Inputs>();
 
+  // 유효성 검사
   const validateEmail = (email: string) => {
     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!email) {
@@ -113,7 +107,8 @@ export default function InputForm({ owner }: InputFormProps) {
     }
   };
 
-  const onLogin = (e: FormEvent) => {
+  // 로그인
+  const onLogin = async (e: FormEvent) => {
     e.preventDefault();
     if (!inputData.loginEmail) {
       return alert('이메일을 입력해주세요.');
@@ -121,9 +116,31 @@ export default function InputForm({ owner }: InputFormProps) {
     if (!inputData.loginPassword) {
       return alert('비밀번호를 입력해주세요.');
     }
-    console.log('로그인');
+    setIsLoading(true);
+    const { loginEmail, loginPassword } = inputData;
+    try {
+      const result = await login(loginEmail, loginPassword);
+      if (result) {
+        setIsLoading(false);
+      }
+
+      if (!result.emailVerified) {
+        router.push('/login/verify');
+      } else {
+        // todo : 저장 정보 수정
+        const token = await result.getIdToken();
+        localStorage.setItem('auth', token);
+        router.push('/');
+      }
+    } catch (error: unknown) {
+      if (error instanceof FirebaseError) {
+        alert(getErrorMessage(error.code));
+        setIsLoading(false);
+      }
+    }
   };
 
+  // 회원가입
   const onSignup = async (e: FormEvent) => {
     e.preventDefault();
     if (errors.signupEmail?.message || !inputData.signupEmail) {
@@ -342,6 +359,15 @@ export default function InputForm({ owner }: InputFormProps) {
       return;
   }
 }
+
+type Inputs = {
+  loginEmail: string;
+  loginPassword: string;
+  signupEmail: string;
+  signupPassword: string;
+  checkPassword: string;
+  name: string;
+};
 
 interface InputFormProps {
   owner: 'login' | 'signup';
